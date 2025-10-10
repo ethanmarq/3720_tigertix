@@ -1,15 +1,24 @@
-## Issues
-### Fix for module not found
-typo in files or folders, ref project gudie
+# Steps to run and use
+## Start in three different terminals
+In: ./backend/client-service
+`npm start`
 
-### Fix for localhost:5000 psuedo-start
-Issue: port 5000 is being used already by another service
-Solution: change port to 3001
+In: ./backend/admin-service
+`npm start`
 
-- Update backend
-`nvim server.js`
-change 5000 to 3001
+In ./frontend
+`npm start`
 
-- Update frontend
-`nvim App.js`
-change 5000 to 3001
+## Post Request
+```
+curl -X POST http://localhost:5001/api/admin/events \
+-H "Content-Type: application/json" \
+-d '{"name": "TigerTix Launch Party", "date": "2025-10-20", "tickets": 150}'
+```
+
+## Get Endpoint and Post Request
+http://localhost:6001/api/events
+
+`curl -X POST http://localhost:6001/api/events/1/purchase`
+
+
