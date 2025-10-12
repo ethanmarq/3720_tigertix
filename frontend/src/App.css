@@ -1,3 +1,17 @@
+/* Center the header */
+.centered-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Focus indicator for buttons */
+.focusable-btn:focus {
+  outline: 3px solid #ff9800;
+  outline-offset: 2px;
+}
 /* Styling for the list to make it cleaner */
 ul {
   list-style-type: none;

@@ -52,8 +52,8 @@ function App() {
 
     return (
         <div className="App">
-            <header>
-                <h1>Clemson Campus Events</h1>
+            <header className="centered-header">
+                <h1 tabIndex="0">Clemson Campus Events</h1>
             </header>
             <main>
                 {/* This div is a "live region" for accessibility. Screen readers will announce changes to its content. */}
@@ -63,15 +63,18 @@ function App() {
                 <ul>
                     {events.map((event) => (
                         <li key={event.id}>
-                            {event.name} - {new Date(event.date).toLocaleDateString()} - <strong>{event.tickets}</strong> tickets available
-                            <button 
+                            <span id={`event-label-${event.id}`}>
+                                {event.name} - {new Date(event.date).toLocaleDateString()} - <strong>{event.tickets}</strong> tickets available
+                            </span>
+                            <button
                                 onClick={() => buyTicket(event.id, event.name)}
-                                // Descriptive label for screen readers
-                                aria-label={`Buy one ticket for ${event.name}`}
-                                // Disable button if no tickets are left
+                                aria-label={event.tickets > 0 ? `Buy one ticket for ${event.name} on ${new Date(event.date).toLocaleDateString()}` : `${event.name} is sold out`}
+                                aria-labelledby={`event-label-${event.id}`}
                                 disabled={event.tickets <= 0}
+                                tabIndex="0"
+                                className="focusable-btn"
                             >
-                                {event.tickets > 0 ? 'Buy Ticket' : 'Sold Out'}
+                                {event.tickets > 0 ? `Buy Ticket for ${event.name}` : 'Sold Out'}
                             </button>
                         </li>
                     ))}
