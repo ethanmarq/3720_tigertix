@@ -1,0 +1,22 @@
+{
+  "name": "3720_tigertix",
+  "version": "1.0.0",
+  "description": "In: ./backend/client-service `npm start`",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ethanmarq/3720_tigertix.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ethanmarq/3720_tigertix/issues"
+  },
+  "homepage": "https://github.com/ethanmarq/3720_tigertix#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^24.9.2"
+  }
+}

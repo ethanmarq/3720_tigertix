@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import './App.css';
+import Chatbot from './Chatbot'; // Import the new component
 
 function App() {
     const [events, setEvents] = useState([]);
-    const [message, setMessage] = useState(''); // For screen reader announcements
+    const [message, setMessage] = useState('');
 
-    // useCallback to memoize the function so it's not recreated on every render
     const fetchEvents = useCallback(() => {
-        // The frontend now fetches from the client service on port 6001
         fetch('http://localhost:6001/api/events')
             .then((res) => res.json())
             .then((data) => setEvents(data))
@@ -17,7 +16,6 @@ function App() {
             });
     }, []);
 
-    // Fetch events on initial component mount
     useEffect(() => {
         fetchEvents();
     }, [fetchEvents]);
@@ -28,22 +26,18 @@ function App() {
         })
         .then(res => {
             if (!res.ok) {
-                // If the server responds with an error (e.g., 400 for no tickets)
-                // we convert it to JSON to read the error message
                 return res.json().then(err => Promise.reject(err));
             }
             return res.json();
         })
         .then(data => {
-            // Announce success to screen readers via the live region
             const successMsg = `Ticket purchased successfully for ${eventName}.`;
             setMessage(successMsg);
-            alert(successMsg); // Visual confirmation for sighted users
-            fetchEvents(); // Refresh the list of events to show the new ticket count
+            alert(successMsg);
+            fetchEvents();
         })
         .catch(err => {
             console.error('Purchase error:', err);
-            // Announce failure and show an alert
             const errorMsg = `Failed to purchase ticket for ${eventName}. Reason: ${err.error || 'Server error'}`;
             setMessage(errorMsg);
             alert(errorMsg);
@@ -56,7 +50,6 @@ function App() {
                 <h1 tabIndex="0">Clemson Campus Events</h1>
             </header>
             <main>
-                {/* This div is a "live region" for accessibility. Screen readers will announce changes to its content. */}
                 <div role="status" aria-live="polite" className="sr-only">
                     {message}
                 </div>
@@ -68,17 +61,18 @@ function App() {
                             </span>
                             <button
                                 onClick={() => buyTicket(event.id, event.name)}
-                                aria-label={event.tickets > 0 ? `Buy one ticket for ${event.name} on ${new Date(event.date).toLocaleDateString()}` : `${event.name} is sold out`}
+                                aria-label={event.tickets > 0 ? `Buy one ticket for ${event.name}` : `${event.name} is sold out`}
                                 aria-labelledby={`event-label-${event.id}`}
                                 disabled={event.tickets <= 0}
                                 tabIndex="0"
                                 className="focusable-btn"
                             >
-                                {event.tickets > 0 ? `Buy Ticket for ${event.name}` : 'Sold Out'}
+                                {event.tickets > 0 ? `Buy Ticket` : 'Sold Out'}
                             </button>
                         </li>
                     ))}
                 </ul>
+                <Chatbot onBookingConfirmed={fetchEvents} />
             </main>
         </div>
     );
