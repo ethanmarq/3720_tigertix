@@ -1,3 +1,4 @@
+
 /* Center the header */
 .centered-header {
   display: flex;
@@ -12,6 +13,7 @@
   outline: 3px solid #ff9800;
   outline-offset: 2px;
 }
+
 /* Styling for the list to make it cleaner */
 ul {
   list-style-type: none;
@@ -28,22 +30,36 @@ li {
   border-bottom: 1px solid #ddd;
 }
 
-button {
+/* Accessible button styling */
+button,
+.focusable-btn {
   padding: 0.5rem 1rem;
   cursor: pointer;
-  border: 1px solid #61dafb;
-  background-color: transparent;
-  color: #61dafb;
+  /* Use a dark blue for high contrast */
+  border: 1px solid #0a3978;
+  background-color: #fff;
+  color: #0a3978;  /* Changed from #61dafb to much darker */
   border-radius: 4px;
   margin-left: 1rem;
+  font-weight: 600;
 }
 
-button:disabled {
+/* For extra contrast, use white text on dark blue background */
+button.primary,
+.focusable-btn.primary {
+  color: #fff;
+  background-color: #0a3978;
+  border-color: #0a3978;
+}
+
+/* Disabled button */
+button:disabled,
+.focusable-btn:disabled {
   cursor: not-allowed;
   border-color: #ccc;
   color: #ccc;
+  background-color: #f5f5f5;
 }
-
 
 /* Class to visually hide elements but keep them accessible to screen readers */
 .sr-only {
@@ -57,3 +73,4 @@ button:disabled {
   white-space: nowrap;
   border-width: 0;
 }
+

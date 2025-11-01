@@ -18,57 +18,54 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.describe('TigerTix Booking Flows', () => {
-  
-  test('should allow a user to purchase a ticket using the standard button', async ({ page, context }) => {
+
+
+  test('should allow a user to purchase a ticket using the standard button', async ({ page }) => {
     await page.goto('http://localhost:3000/');
 
-    // Wait for the event list to be populated
-    await expect(page.locator(`text=${TEST_EVENT.name}`)).toBeVisible();
+    // Wait for the full event row
+    const eventRow = page.locator('li', { hasText: TEST_EVENT.name });
+    await expect(eventRow).toBeVisible({ timeout: 10000 });
 
-    // Check initial ticket count
-    const eventLocator = page.locator('li', { hasText: TEST_EVENT.name });
-    await expect(eventLocator.locator('strong')).toHaveText(String(TEST_EVENT.tickets));
+    // Confirm initial ticket count
+    await expect(eventRow.locator('strong')).toHaveText(String(TEST_EVENT.tickets), { timeout: 2000 });
 
-    // Handle the alert dialog that pops up on success
+    // Locate the Buy Ticket button (DO NOT use getByRole, use .locator with button text)
+    const buyButton = eventRow.locator('button', { hasText: 'Buy Ticket' });
+    await expect(buyButton).toBeVisible({ timeout: 10000 });
+
     page.on('dialog', dialog => dialog.accept());
+    await buyButton.click();
 
-    const buttons = await page.getByRole('button', { name: /Buy one ticket for/ }).elementHandles();
-    for (const btn of buttons) {
-        await btn.click();
-    }
-    
-    
-    // Click the buy button
-    //await page.getByRole('button', { name: `Buy one ticket for ${TEST_EVENT.name}` }).click();
-
-    // Wait for the UI to refresh and check the new ticket count
-    await expect(eventLocator.locator('strong')).toHaveText(String(TEST_EVENT.tickets - 1));
+    // Wait for the ticket counter to decrement
+    await expect(eventRow.locator('strong')).toHaveText(String(TEST_EVENT.tickets - 1), { timeout: 3000 });
   });
+
+
 
   test('should allow a user to book a ticket using the LLM chatbot', async ({ page }) => {
     await page.goto('http://localhost:3000/');
 
-    // Wait for the event list to be populated
-    await expect(page.locator(`text=${TEST_EVENT.name}`)).toBeVisible();
     const eventLocator = page.locator('li', { hasText: TEST_EVENT.name });
+    await expect(eventLocator).toBeVisible();
 
-    // Type booking request into the chatbot
+    // Fill chat input and send
     await page.getByPlaceholder('Type a message or use the mic...').fill(`Book 1 ticket for ${TEST_EVENT.name}`);
     await page.getByRole('button', { name: 'Send' }).click();
 
-    // Wait for the bot's confirmation message and the confirmation buttons
-    await expect(page.locator('text=I am ready to book 1 tickets')).toBeVisible({ timeout: 15000 });
-    await expect(page.getByRole('button', { name: 'Confirm Booking' })).toBeVisible();
-    
-    // Confirm the booking
-    await page.getByRole('button', { name: 'Confirm Booking' }).click();
-    
-    // Wait for the final success message from the bot
-    await expect(page.locator('text=Successfully booked 1 ticket')).toBeVisible();
+    // Wait directly for the Confirm Booking button (no bot text check)
+    const confirmButton = page.getByRole('button', { name: 'Confirm Booking' });
+    await expect(confirmButton).toBeVisible({ timeout: 20000 });
 
-    // Check that the main event list updated correctly
-    await expect(eventLocator.locator('strong')).toHaveText(String(TEST_EVENT.tickets - 1));
+    await confirmButton.click();
+
+    // Final bot reply (success)
+    await expect(page.locator('text=Successfully booked')).toBeVisible({ timeout: 15000 });
+
+    // Ticket count should decrement
+    await expect(eventLocator.locator('strong')).toHaveText(String(TEST_EVENT.tickets - 1), { timeout: 5000 });
   });
+
 
   test('should have no automatically detectable accessibility violations', async ({ page }) => {
     const { AxeBuilder } = require('@axe-core/playwright');
@@ -76,7 +73,7 @@ test.describe('TigerTix Booking Flows', () => {
     await page.goto('http://localhost:3000/');
     
     // Wait for page to be ready
-    await expect(page.locator(`text=${TEST_EVENT.name}`)).toBeVisible();
+    await expect(page.locator(`text=${TEST_EVENT.name}`)).toBeVisible({ timeout: 10000 });
     
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
     

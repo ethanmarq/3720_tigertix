@@ -28,3 +28,5 @@ http://localhost:6001/api/events
 1. https://ollama.com/download
 2. In a terminal `ollama pull llama3.1:8b`
 
+## Requirements for playwrite testing
+`npm install --save-dev @axe-core/playwright`
