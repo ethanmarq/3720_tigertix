@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './Chatbot.css';
 
@@ -11,8 +11,11 @@ const Chatbot = ({ onBookingConfirmed }) => {
         listening,
         resetTranscript,
         browserSupportsSpeechRecognition,
-        finalTranscript
+        finalTranscript,
+        isMicrophoneAvailable
     } = useSpeechRecognition();
+
+    const [micError, setMicError] = useState('');
 
     // A ref to track if a message has been sent to prevent duplicates
     const messageSentRef = useRef(false);
@@ -22,24 +25,18 @@ const Chatbot = ({ onBookingConfirmed }) => {
         setInputValue(transcript);
     }, [transcript]);
 
-    // This effect handles sending the message when listening stops
-    useEffect(() => {
-        if (finalTranscript && !listening && !messageSentRef.current) {
-            sendMessage(finalTranscript);
-            messageSentRef.current = true; // Mark as sent
-        }
-    }, [finalTranscript, listening]);
+    // (moved) effect to send message when listening stops is defined below after sendMessage
 
-    const speak = (text) => {
+    const speak = useCallback((text) => {
         const utterance = new SpeechSynthesisUtterance(text);
         window.speechSynthesis.speak(utterance);
-    };
+    }, []);
 
-    const addMessage = (text, sender) => {
+    const addMessage = useCallback((text, sender) => {
         setMessages(prev => [...prev, { text, sender }]);
-    };
+    }, []);
 
-    const sendMessage = async (text) => {
+    const sendMessage = useCallback(async (text) => {
         if (!text) return;
 
         addMessage(text, 'user');
@@ -77,7 +74,15 @@ const Chatbot = ({ onBookingConfirmed }) => {
             addMessage(errorMsg, 'bot');
             speak(errorMsg);
         }
-    };
+    }, [addMessage, resetTranscript, speak]);
+
+    // This effect handles sending the message when listening stops
+    useEffect(() => {
+        if (finalTranscript && !listening && !messageSentRef.current) {
+            sendMessage(finalTranscript);
+            messageSentRef.current = true; // Mark as sent
+        }
+    }, [finalTranscript, listening, sendMessage]);
 
     const handleConfirmBooking = async () => {
         if (!bookingProposal) return;
@@ -113,19 +118,61 @@ const Chatbot = ({ onBookingConfirmed }) => {
         }
     };
 
-    const handleMicClick = () => {
-        if (listening) {
-            SpeechRecognition.stopListening();
-        } else {
-            resetTranscript();
-            messageSentRef.current = false; // Reset the sent flag
-            SpeechRecognition.startListening({ continuous: false });
+    // Keep a timeout to auto-stop listening if the onend event doesn't fire promptly
+    const stopTimeoutRef = useRef(null);
+
+    const ensureMicPermission = async () => {
+        // If the library reports mic unavailable, try to trigger permission prompt
+        if (isMicrophoneAvailable === false && navigator.mediaDevices?.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                // Immediately stop tracks; we only needed the permission
+                stream.getTracks().forEach(t => t.stop());
+            } catch (err) {
+                throw new Error('Microphone permission denied.');
+            }
         }
     };
 
-    if (!browserSupportsSpeechRecognition) {
-        return <span>Browser doesn't support speech recognition.</span>;
-    }
+    const stopListeningSafely = () => {
+        try { SpeechRecognition.stopListening(); } catch (_) { /* no-op */ }
+        if (stopTimeoutRef.current) {
+            clearTimeout(stopTimeoutRef.current);
+            stopTimeoutRef.current = null;
+        }
+    };
+
+    const handleMicClick = async () => {
+        setMicError('');
+        if (!browserSupportsSpeechRecognition) {
+            setMicError('Voice input is not supported in this browser. Please use Chrome or Edge.');
+            return;
+        }
+
+        if (listening) {
+            stopListeningSafely();
+            return;
+        }
+
+        try {
+            await ensureMicPermission();
+            resetTranscript();
+            messageSentRef.current = false; // Reset flag for a new utterance
+            // Start a single-utterance capture with interim results for responsiveness
+            SpeechRecognition.startListening({ continuous: false, interimResults: true, language: 'en-US' });
+            // Failsafe: auto-stop after 7 seconds in case the onend event doesn't fire
+            stopTimeoutRef.current = setTimeout(() => stopListeningSafely(), 7000);
+        } catch (err) {
+            setMicError(err.message || 'Unable to access microphone.');
+        }
+    };
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            stopListeningSafely();
+        };
+    }, []);
 
     return (
         <div className="chatbot-container">
@@ -136,6 +183,16 @@ const Chatbot = ({ onBookingConfirmed }) => {
                     </div>
                 ))}
             </div>
+            {!browserSupportsSpeechRecognition && (
+                <div className="chatbot-warning" style={{ color: '#b59700', marginBottom: 8 }}>
+                    Voice input isn&apos;t supported in this browser. Use Chrome or Edge for the mic, or type your message.
+                </div>
+            )}
+            {micError && (
+                <div className="chatbot-error" style={{ color: '#c0392b', marginBottom: 8 }}>
+                    {micError}
+                </div>
+            )}
             {bookingProposal && (
                 <div className="booking-confirmation">
                     <p>Do you want to confirm this booking?</p>
@@ -160,7 +217,7 @@ const Chatbot = ({ onBookingConfirmed }) => {
                     messageSentRef.current = false; // Reset flag for manual send
                     sendMessage(inputValue);
                 }}>Send</button>
-                <button onClick={handleMicClick} className={listening ? 'listening' : ''}>
+                <button onClick={handleMicClick} className={listening ? 'listening' : ''} disabled={!browserSupportsSpeechRecognition} title={!browserSupportsSpeechRecognition ? 'Use Chrome or Edge for voice input' : ''}>
                     🎤
                 </button>
             </div>
