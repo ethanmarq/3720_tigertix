@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import './App.css';
 import Chatbot from './Chatbot'; // Import the new component
+import { AuthProvider, useAuth } from './AuthContext';
+import Login from './Login';
+import Register from './Register';
 
-function App() {
+function EventsApp() {
     const [events, setEvents] = useState([]);
     const [message, setMessage] = useState('');
 
@@ -44,15 +47,33 @@ function App() {
         });
     };
 
+    const { user, logout } = useAuth();
+
     return (
         <div className="App">
             <header className="centered-header">
                 <h1 tabIndex="0">Clemson Campus Events</h1>
+                <div>
+                    {user ? (
+                        <>
+                            <span>Logged in as {user.email}</span>
+                            <button onClick={logout} style={{ marginLeft: '1rem' }}>Logout</button>
+                        </>
+                    ) : (
+                        <span>Not logged in</span>
+                    )}
+                </div>
             </header>
             <main>
                 <div role="status" aria-live="polite" className="sr-only">
                     {message}
                 </div>
+                {!user && (
+                    <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
+                        <Login />
+                        <Register />
+                    </div>
+                )}
                 <ul>
                     {events.map((event) => (
                         <li key={event.id}>
@@ -75,6 +96,13 @@ function App() {
                 <Chatbot onBookingConfirmed={fetchEvents} />
             </main>
         </div>
+    );
+}
+function App() {
+    return (
+        <AuthProvider>
+            <EventsApp />
+        </AuthProvider>
     );
 }
 

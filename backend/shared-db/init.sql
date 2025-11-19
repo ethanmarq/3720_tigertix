@@ -4,3 +4,9 @@ CREATE TABLE IF NOT EXISTS events (
     date TEXT NOT NULL,
     tickets INTEGER NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL
+);
