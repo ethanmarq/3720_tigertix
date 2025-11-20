@@ -33,15 +33,25 @@ function Login() {
     <div>
       <h2>Login</h2>
       <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+        <div style={{ marginBottom: '0.5rem' }}>
+          <label style={{ marginRight: '0.5rem' }}>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ padding: '0.25rem 0.4rem' }}
+          />
         </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        <div style={{ marginBottom: '0.75rem' }}>
+          <label style={{ marginRight: '0.5rem' }}>Password:</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            style={{ padding: '0.25rem 0.4rem' }}
+          />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit" style={{ padding: '0.3rem 0.9rem' }}>Login</button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>}
     </div>

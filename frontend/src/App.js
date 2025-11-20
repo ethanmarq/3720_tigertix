@@ -53,27 +53,29 @@ function EventsApp() {
         <div className="App">
             <header className="centered-header">
                 <h1 tabIndex="0">Clemson Campus Events</h1>
-                <div>
+            </header>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', margin: '0 2rem 1.5rem' }}>
+                <div style={{ marginBottom: '0.5rem', fontWeight: 'bold', marginRight: '4rem' }}>
                     {user ? (
                         <>
-                            <span>Logged in as {user.email}</span>
-                            <button onClick={logout} style={{ marginLeft: '1rem' }}>Logout</button>
+                            Logged in as {user.email}
+                            <button onClick={logout} style={{ marginLeft: '0.75rem' }}>Logout</button>
                         </>
                     ) : (
-                        <span>Not logged in</span>
+                        <>Not logged in</>
                     )}
                 </div>
-            </header>
-            <main>
-                <div role="status" aria-live="polite" className="sr-only">
-                    {message}
-                </div>
                 {!user && (
-                    <div style={{ display: 'flex', gap: '2rem', marginBottom: '2rem' }}>
+                    <div style={{ display: 'flex', gap: '3rem' }}>
                         <Login />
                         <Register />
                     </div>
                 )}
+            </div>
+            <main>
+                <div role="status" aria-live="polite" className="sr-only">
+                    {message}
+                </div>
                 <ul>
                     {events.map((event) => (
                         <li key={event.id}>
