@@ -1,6 +1,6 @@
 const path = require('path');
 const fs = require('fs');
-const db = require('../../../backend/shared-db/db');
+const db = require('../../../shared-db/db');
 const { createUser, findUserByEmail } = require('../../models/userModel');
 
 beforeAll((done) => {
