@@ -23,7 +23,7 @@ describe('User authentication API', () => {
 
   test('registers a new user and sets token cookie', async () => {
     const res = await request(app)
-      .post(`${base}/register`)
+      .post(`/register`)
       .send({ email, password });
 
     expect(res.statusCode).toBe(201);
@@ -42,7 +42,7 @@ describe('User authentication API', () => {
 
   test('logs in with correct credentials', async () => {
     const res = await request(app)
-      .post(`${base}/login`)
+      .post(`/login`)
       .send({ email, password });
 
     expect(res.statusCode).toBe(200);
@@ -52,7 +52,7 @@ describe('User authentication API', () => {
 
   test('rejects login with wrong password', async () => {
     const res = await request(app)
-      .post(`${base}/login`)
+      .post(`/login`)
       .send({ email, password: 'wrong' });
 
     expect(res.statusCode).toBe(401);
@@ -60,13 +60,13 @@ describe('User authentication API', () => {
 
   test('/auth/me requires valid token (cookie)', async () => {
     const loginRes = await request(app)
-      .post(`${base}/login`)
+      .post(`/login`)
       .send({ email, password });
 
     const cookie = loginRes.headers['set-cookie'];
 
     const meRes = await request(app)
-      .get(`${base}/me`)
+      .get(`/me`)
       .set('Cookie', cookie);
 
     expect(meRes.statusCode).toBe(200);
@@ -75,13 +75,13 @@ describe('User authentication API', () => {
 
   test('logout clears token cookie', async () => {
     const loginRes = await request(app)
-      .post(`${base}/login`)
+      .post(`/login`)
       .send({ email, password });
 
     const cookie = loginRes.headers['set-cookie'];
 
     const logoutRes = await request(app)
-      .post(`${base}/logout`)
+      .post(`/logout`)
       .set('Cookie', cookie);
 
     expect(logoutRes.statusCode).toBe(200);

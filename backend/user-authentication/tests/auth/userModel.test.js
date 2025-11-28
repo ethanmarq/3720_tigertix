@@ -3,6 +3,12 @@ const fs = require('fs');
 const db = require('../../../shared-db/db');
 const { createUser, findUserByEmail } = require('../../models/userModel');
 
+
+beforeEach((done) => {
+  // Clean up the specific test users to ensure a fresh start
+  db.run("DELETE FROM users WHERE email IN ('modeltest@example.com', 'duplicate@example.com')", done);
+});
+
 beforeAll((done) => {
   const initSql = fs.readFileSync(
     path.join(__dirname, '../../../shared-db/init.sql'),
