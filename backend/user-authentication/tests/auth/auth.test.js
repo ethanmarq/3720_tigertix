@@ -44,19 +44,34 @@ describe('User authentication API', () => {
     expect(res.headers['set-cookie']).toBeDefined();
   });
 
-  test('prevents duplicate registration for same email', async () => {
+  test('prevents duplicate registration', async () => {
+    const email = 'duplicate-test@example.com';
+    const password = 'password123';
+    
+    // 1. First registration (Should succeed)
+    await request(app).post('/register').send({ email, password });
+    
+    // 2. Second registration (Should fail)
     const res = await request(app)
-      .post(`/register`)
+      .post('/register')
       .send({ email, password });
-
+      
     expect(res.statusCode).toBe(409);
   });
 
-  test('logs in with correct credentials', async () => {
-    const res = await request(app)
-      .post(`/login`)
-      .send({ email, password });
 
+  test('logs in with correct credentials', async () => {
+    const email = 'login-test@example.com';
+    const password = 'password123';
+    
+    // 1. Register first (Create the user)
+    await request(app).post('/register').send({ email, password });
+    
+    // 2. Then Login
+    const res = await request(app)
+      .post('/login')
+      .send({ email, password });
+      
     expect(res.statusCode).toBe(200);
     expect(res.body.user.email).toBe(email);
     expect(res.headers['set-cookie']).toBeDefined();

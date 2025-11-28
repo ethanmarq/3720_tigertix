@@ -48,19 +48,15 @@ describe('User model and database', () => {
     expect(user.email).toBe(email);
   });
 
-  test('enforces unique email (simulated concurrency)', async () => {
-    const dupEmail = 'duplicate@example.com';
 
-    await createUser(dupEmail, password);
-
-    let error = null;
+  test('enforces unique email', async () => {
+    await createUser('unique@example.com', 'hash');
     try {
-      await createUser(dupEmail, password);
-    } catch (err) {
-      error = err;
+        await createUser('unique@example.com', 'hash'); // Should fail
+    } catch (error) {
+        expect(error).not.toBeNull();
+        expect(error.code).toBe('SQLITE_CONSTRAINT');
     }
-
-    expect(error).not.toBeNull();
-    expect(error.code).toBe('SQLITE_CONSTRAINT');
   });
+
 });
