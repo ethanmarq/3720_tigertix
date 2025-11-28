@@ -1,11 +1,11 @@
 const path = require('path');
 const fs = require('fs');
-const db = require('../../backend/shared-db/db');
-const { createUser, findUserByEmail } = require('../../backend/user-authentication/models/userModel');
+const db = require('../../../backend/shared-db/db');
+const { createUser, findUserByEmail } = require('../../models/userModel');
 
 beforeAll((done) => {
   const initSql = fs.readFileSync(
-    path.join(__dirname, '../../backend/shared-db/init.sql'),
+    path.join(__dirname, '../../../shared-db/init.sql'),
     'utf8'
   );
   db.exec(initSql, done);

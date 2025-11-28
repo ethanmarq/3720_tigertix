@@ -1,12 +1,12 @@
 const request = require('supertest');
 const path = require('path');
 const fs = require('fs');
-const app = require('../../backend/user-authentication/server');
-const db = require('../../backend/shared-db/db');
+const app = require('../../server');
+const db = require('../../../shared-db/db');
 
 beforeAll((done) => {
   const initSql = fs.readFileSync(
-    path.join(__dirname, '../../backend/shared-db/init.sql'),
+    path.join(__dirname, '../../../shared-db/init.sql'),
     'utf8'
   );
   db.exec(initSql, done);
