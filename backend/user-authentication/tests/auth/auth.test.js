@@ -1,8 +1,14 @@
 const request = require('supertest');
 const path = require('path');
 const fs = require('fs');
-const app = require('../../server');
 const db = require('../../../shared-db/db');
+
+const express = require('express');
+const originalApp = require('../../server');
+
+const app = express();
+app.use(express.json());
+app.use('/', originalApp);
 
 beforeAll((done) => {
   const initSql = fs.readFileSync(

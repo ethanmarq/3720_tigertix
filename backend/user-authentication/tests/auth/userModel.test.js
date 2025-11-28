@@ -42,6 +42,7 @@ describe('User model and database', () => {
   });
 
   test('findUserByEmail returns existing user', async () => {
+    const newUser = await createUser(email, password); 
     const user = await findUserByEmail(email);
     expect(user).toBeDefined();
     expect(user.email).toBe(email);
