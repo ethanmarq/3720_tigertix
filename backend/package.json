@@ -1,0 +1,17 @@
+{
+  "name": "tigertix-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js",
+    "install-all": "npm install && cd admin-service && npm install && cd ../client-service && npm install && cd ../llm-service && npm install && cd ../user-authentication && npm install"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "sqlite3": "^5.1.7",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "jsonwebtoken": "^9.0.2",
+    "dotenv": "^16.4.5"
+  }
+}

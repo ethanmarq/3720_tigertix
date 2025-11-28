@@ -1,21 +1,14 @@
-import sqlite3 from 'sqlite3';
-import path from 'path';
-import { fileURLToPath } from 'url';
+const sqlite3 = require('sqlite3');
+const path = require('path');
 
-// --- FIX STARTS HERE ---
-// Get the directory name of the current module, which is required for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Construct the correct path relative to the current file's location
+// In CommonJS, __dirname is available globally, so we don't need the fileURLToPath workaround
 const dbPath = path.resolve(__dirname, '../../shared-db/database.sqlite');
-// --- FIX ENDS HERE ---
 
 const getDb = () => new sqlite3.Database(dbPath, (err) => {
     if (err) console.error('Error opening database', err.message);
 });
 
-export const getEvents = () => {
+const getEvents = () => {
     const db = getDb();
     return new Promise((resolve, reject) => {
         db.all("SELECT id, name, tickets FROM events WHERE tickets > 0", [], (err, rows) => {
@@ -26,7 +19,7 @@ export const getEvents = () => {
     });
 };
 
-export const findEventByName = (name) => {
+const findEventByName = (name) => {
     const db = getDb();
     return new Promise((resolve, reject) => {
         db.get("SELECT id, name, tickets FROM events WHERE name LIKE ?", [`%${name}%`], (err, row) => {
@@ -37,7 +30,7 @@ export const findEventByName = (name) => {
     });
 };
 
-export const bookTickets = (eventId, quantity) => {
+const bookTickets = (eventId, quantity) => {
     const db = getDb();
     return new Promise((resolve, reject) => {
         db.serialize(() => {
@@ -78,3 +71,5 @@ export const bookTickets = (eventId, quantity) => {
         });
     });
 };
+
+module.exports = { getEvents, findEventByName, bookTickets };

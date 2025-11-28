@@ -14,7 +14,7 @@ In ./frontend
 
 ## Post Request / Add event to database
 ```
-curl -X POST http://localhost:5001/api/admin/events \
+curl -X POST http://localhost:10000/api/admin/events \
 -H "Content-Type: application/json" \
 -d '{"name": "TigerTix Launch Party", "date": "2025-10-20", "tickets": 150}'
 ```

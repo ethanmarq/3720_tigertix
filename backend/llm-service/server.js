@@ -1,7 +1,6 @@
-
-import express from 'express';
-import cors from 'cors';
-import llmRoutes from './routes/llmRoutes.js';
+const express = require('express');
+const cors = require('cors');
+const llmRoutes = require('./routes/llmRoutes');
 
 const app = express();
 const PORT = 7001;
@@ -15,6 +14,11 @@ app.get('/', (req, res) => {
   res.send('LLM Booking Service is running.');
 });
 
-app.listen(PORT, () => {
-    console.log(`LLM service running at http://localhost:${PORT}`);
-});
+// Only listen if run directly (allows importing in the unified Gateway)
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`LLM service running at http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;

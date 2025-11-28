@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
+import API_BASE_URL from './config';
 
 function Login() {
   const { login } = useAuth();
@@ -11,7 +12,7 @@ function Login() {
     e.preventDefault();
     setError('');
     try {
-      const res = await fetch('http://localhost:4003/auth/login', {
+      const res = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

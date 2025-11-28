@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './Chatbot.css';
+import API_BASE_URL from './config';
 
 const Chatbot = ({ onBookingConfirmed }) => {
     const [messages, setMessages] = useState([]);
@@ -44,7 +45,7 @@ const Chatbot = ({ onBookingConfirmed }) => {
         resetTranscript();
 
         try {
-            const response = await fetch('http://localhost:7001/api/llm/parse', {
+            const response = await fetch(`${API_BASE_URL}/api/llm/parse`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ query: text }),
@@ -88,7 +89,7 @@ const Chatbot = ({ onBookingConfirmed }) => {
         if (!bookingProposal) return;
     
         try {
-            const response = await fetch('http://localhost:7001/api/llm/book', {
+            const response = await fetch(`${API_BASE_URL}/api/llm/book`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

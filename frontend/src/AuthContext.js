@@ -9,7 +9,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function fetchMe() {
       try {
-        const res = await fetch('http://localhost:4003/auth/me', {
+        const res = await fetch('${API_BASE_URL}/auth/me', {
           credentials: 'include'
         });
         if (res.ok) {
@@ -29,7 +29,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await fetch('http://localhost:4003/auth/logout', {
+    await fetch('${API_BASE_URL}/auth/logout', {
       method: 'POST',
       credentials: 'include'
     });

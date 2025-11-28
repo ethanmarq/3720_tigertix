@@ -4,13 +4,14 @@ import Chatbot from './Chatbot'; // Import the new component
 import { AuthProvider, useAuth } from './AuthContext';
 import Login from './Login';
 import Register from './Register';
+import API_BASE_URL from './config';
 
 function EventsApp() {
     const [events, setEvents] = useState([]);
     const [message, setMessage] = useState('');
 
     const fetchEvents = useCallback(() => {
-        fetch('http://localhost:6001/api/events')
+        fetch('${API_BASE_URL}/api/events')
             .then((res) => res.json())
             .then((data) => setEvents(data))
             .catch((err) => {
@@ -24,7 +25,7 @@ function EventsApp() {
     }, [fetchEvents]);
 
     const buyTicket = (eventId, eventName) => {
-        fetch(`http://localhost:6001/api/events/${eventId}/purchase`, {
+        fetch(`${API_BASE_URL}/api/events/${eventId}/purchase`, {
             method: 'POST',
         })
         .then(res => {

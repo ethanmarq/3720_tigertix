@@ -42,6 +42,11 @@ app.get('/', (req, res) => {
   res.send('API server is running. See /api/routes for available endpoints.');
 });
 
-app.listen(PORT, () => {
-    console.log(`Client service running at http://localhost:${PORT}`);
-});
+
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Service running on port ${PORT}`);
+    });
+}
+
+module.exports = app;
