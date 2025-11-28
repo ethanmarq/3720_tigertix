@@ -10,6 +10,12 @@ const app = express();
 app.use(express.json());
 app.use('/', originalApp);
 
+beforeEach((done) => {
+    // Delete the users we are about to test with
+    // Adjust 'test@example.com' to match whatever email your test uses
+    db.run("DELETE FROM users WHERE email LIKE 'test%' OR email = 'duplicate@example.com'", done);
+});
+
 beforeAll((done) => {
   const initSql = fs.readFileSync(
     path.join(__dirname, '../../../shared-db/init.sql'),
@@ -40,7 +46,7 @@ describe('User authentication API', () => {
 
   test('prevents duplicate registration for same email', async () => {
     const res = await request(app)
-      .post(`${base}/register`)
+      .post(`/register`)
       .send({ email, password });
 
     expect(res.statusCode).toBe(409);
