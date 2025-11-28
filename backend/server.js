@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 10000;
 // Define all allowed origins
 const allowedOrigins = [
   'http://localhost:3000',
-  'https://3720-tigertix.vercel.app'
+  'https://3720-tigertix.vercel.app',
   'https://tigertix-frontend.vercel.app'
 ];
 app.use(cors({
