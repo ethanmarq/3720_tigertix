@@ -85,32 +85,53 @@ describe('User authentication API', () => {
     expect(res.statusCode).toBe(401);
   });
 
-  test('/auth/me requires valid token (cookie)', async () => {
-    const loginRes = await request(app)
-      .post(`/login`)
-      .send({ email, password });
+  test('/me requires valid token (cookie)', async () => {
+      const email = 'me-test@example.com';
+      const password = 'password123';
+      
+      // 1. Register
+      await request(app).post('/register').send({ email, password });
 
-    const cookie = loginRes.headers['set-cookie'];
+      // 2. Login to get the cookie
+      const loginRes = await request(app)
+          .post('/login')
+          .send({ email, password });
+          
+      // Extract the cookie
+      const cookie = loginRes.headers['set-cookie'];
+      expect(cookie).toBeDefined();
 
-    const meRes = await request(app)
-      .get(`/me`)
-      .set('Cookie', cookie);
-
-    expect(meRes.statusCode).toBe(200);
-    expect(meRes.body.user.email).toBe(email);
+      // 3. Use cookie to access /me
+      const res = await request(app)
+          .get('/me')
+          .set('Cookie', cookie) // Set the cookie header
+          .send();
+          
+      expect(res.statusCode).toBe(200);
+      expect(res.body.user.email).toBe(email);
   });
 
   test('logout clears token cookie', async () => {
-    const loginRes = await request(app)
-      .post(`/login`)
-      .send({ email, password });
+      const email = 'logout-test@example.com';
+      const password = 'password123';
 
-    const cookie = loginRes.headers['set-cookie'];
+      // 1. Register
+      await request(app).post('/register').send({ email, password });
 
-    const logoutRes = await request(app)
-      .post(`/logout`)
-      .set('Cookie', cookie);
+      // 2. Login
+      const loginRes = await request(app)
+          .post('/login')
+          .send({ email, password });
+          
+      const cookie = loginRes.headers['set-cookie'];
 
-    expect(logoutRes.statusCode).toBe(200);
+      // 3. Logout
+      const res = await request(app)
+          .post('/logout')
+          .set('Cookie', cookie)
+          .send();
+          
+      expect(res.statusCode).toBe(200);
   });
+
 });
