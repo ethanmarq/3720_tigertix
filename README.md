@@ -70,7 +70,7 @@ No specific .env file is requried for local deployment, but you can configure po
 1. Start the Unified Backend
 ```bash
 cd backend
-nmp start
+npm start
 ```
 
 2. Start the Frontend
