@@ -36,6 +36,7 @@ jobs:
     - name: Run Backend Unit Tests
       run: |
         cd backend/admin-service && npm test
+        cd ../user-authentication && npm test
 
     - name: Install Frontend Dependencies
       run: |
