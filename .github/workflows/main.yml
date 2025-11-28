@@ -15,14 +15,23 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '18'
+          node-version: '18'
 
-    - name: Install Backend Dependencies
+      - name: Install Backend Dependencies
       run: |
-        cd backend/admin-service && npm install
-        cd ../client-service && npm install
-        cd ../user-authentication && npm install
-        cd ../llm-service && npm install
+        # Install root dependencies
+        cd backend
+        npm ci
+        
+        # Install service dependencies explicitly
+        cd admin-service
+        npm ci
+        cd ../client-service
+        npm ci
+        cd ../user-authentication
+        npm ci
+        cd ../llm-service
+        npm ci
 
     - name: Run Backend Unit Tests
       run: |
