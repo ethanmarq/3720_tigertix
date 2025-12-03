@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import API_BASE_URL from './config';
 
 const AuthContext = createContext(null);
 
@@ -9,7 +10,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     async function fetchMe() {
       try {
-        const res = await fetch('${API_BASE_URL}/auth/me', {
+        const res = await fetch(`${API_BASE_URL}/auth/me`, {
           credentials: 'include'
         });
         if (res.ok) {
@@ -29,7 +30,7 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await fetch('${API_BASE_URL}/auth/logout', {
+    await fetch(`${API_BASE_URL}/auth/logout`, {
       method: 'POST',
       credentials: 'include'
     });

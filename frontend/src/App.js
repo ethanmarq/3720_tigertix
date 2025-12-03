@@ -11,7 +11,7 @@ function EventsApp() {
     const [message, setMessage] = useState('');
 
     const fetchEvents = useCallback(() => {
-        fetch('${API_BASE_URL}/api/events')
+        fetch(`${API_BASE_URL}/api/events`)
             .then((res) => res.json())
             .then((data) => setEvents(data))
             .catch((err) => {

@@ -106,6 +106,9 @@ npx playwright test
 
 Instructor: Dr. Brinkley
 
+##### Video Demo Link 
+https://drive.google.com/file/d/1irS1wVXGxeOR0r6orurpiVDE6u6SaavS/view?usp=sharing
+
 ##### License
 Distributed under the MIT License. See LICENSE for more information.
 
